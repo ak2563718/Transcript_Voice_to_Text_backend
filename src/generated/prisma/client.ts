@@ -46,3 +46,8 @@ export { Prisma }
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model Text
+ * 
+ */
+export type Text = Prisma.TextModel

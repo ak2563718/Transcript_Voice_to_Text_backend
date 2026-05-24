@@ -20,4 +20,13 @@ model User{
   username String @unique
   password String
   refreshToken String?
+  texts      Text[]
+}
+
+model Text {
+  id        String @id @default(cuid())
+  content   String
+  audiofile String
+  user      User @relation(fields: [userId], references: [id])
+  userId    String
 }

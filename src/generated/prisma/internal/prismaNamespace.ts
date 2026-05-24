@@ -384,7 +384,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  User: 'User'
+  User: 'User',
+  Text: 'Text'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -400,7 +401,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user"
+    modelProps: "user" | "text"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -478,6 +479,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Text: {
+      payload: Prisma.$TextPayload<ExtArgs>
+      fields: Prisma.TextFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TextFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TextPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TextFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TextPayload>
+        }
+        findFirst: {
+          args: Prisma.TextFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TextPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TextFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TextPayload>
+        }
+        findMany: {
+          args: Prisma.TextFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TextPayload>[]
+        }
+        create: {
+          args: Prisma.TextCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TextPayload>
+        }
+        createMany: {
+          args: Prisma.TextCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TextCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TextPayload>[]
+        }
+        delete: {
+          args: Prisma.TextDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TextPayload>
+        }
+        update: {
+          args: Prisma.TextUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TextPayload>
+        }
+        deleteMany: {
+          args: Prisma.TextDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TextUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TextUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TextPayload>[]
+        }
+        upsert: {
+          args: Prisma.TextUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TextPayload>
+        }
+        aggregate: {
+          args: Prisma.TextAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateText>
+        }
+        groupBy: {
+          args: Prisma.TextGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TextGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TextCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TextCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -527,6 +602,16 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const TextScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  audiofile: 'audiofile',
+  userId: 'userId'
+} as const
+
+export type TextScalarFieldEnum = (typeof TextScalarFieldEnum)[keyof typeof TextScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -697,6 +782,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  text?: Prisma.TextOmit
 }
 
 /* Types for Logging */
