@@ -15,9 +15,9 @@ export const initializeSocket = (server) => {
 
         socket.on("audio-chunk", async (chunk) => {
 
-            // chunk = small audio buffer
+            console.log("Audio Chunk Received");
 
-            // send to transcription API here
+            // transcription logic here
 
             const transcript = "hello world";
 
@@ -27,5 +27,5 @@ export const initializeSocket = (server) => {
         socket.on("disconnect", () => {
             console.log("User disconnected");
         });
-    });
-};
+    })
+}
