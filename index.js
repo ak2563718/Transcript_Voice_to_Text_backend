@@ -8,6 +8,8 @@ import fs from "fs";
 import { createClient } from "@deepgram/sdk";
 import { prisma } from "./src/db.js";
 import cloudinary from "./config/cloudinary.js";
+import { errorMiddleware } from './middleware/error.Middleware.js'
+import userRoutes from './routes/user.Routes.js'
 
 const app = express();
 
@@ -20,6 +22,7 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.use('/api',userRoutes)
 
 const server = createServer(app);
 
@@ -128,6 +131,7 @@ io.on("connection", async (socket) => {
   });
 });
 
+app.use(errorMiddleware)
 const port = process.env.PORT || 5000;
 
 server.listen(port, () => {

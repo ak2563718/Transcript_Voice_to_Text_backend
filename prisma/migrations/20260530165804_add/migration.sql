@@ -1,0 +1,7 @@
+-- CreateEnum
+CREATE TYPE "AuthProvider" AS ENUM ('GOOGLE', 'CREDENTIALS');
+
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "provider" "AuthProvider" NOT NULL DEFAULT 'CREDENTIALS',
+ADD COLUMN     "providerId" TEXT;
