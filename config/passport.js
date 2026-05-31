@@ -19,6 +19,19 @@ passport.use(
           },
         });
 
+        if(user){
+          user = await prisma.user.update({
+          where:{
+            email :profile.emails?.[0].value,
+          },
+          data:{
+            provider:"GOOGLE",
+            providerId:profile.id,
+          }
+        })
+        return done(null, user)
+        }
+
         if (!user) {
           user = await prisma.user.create({
             data: {
@@ -26,6 +39,7 @@ passport.use(
               email: profile.emails?.[0].value,
               provider: "GOOGLE",
               providerId: profile.id,
+              username: profile.emails?.[0].value.split("@")[0],
             },
           });
         }

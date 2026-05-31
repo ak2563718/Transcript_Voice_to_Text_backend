@@ -6,23 +6,17 @@ import bcrypt from 'bcrypt'
 import { accessToken, decodeaccessToken, refreshToken, decoderefreshToken } from '../utils/tokenCreation.js'
 
 export const userLogin = asyncHandler(async(req, res, next)=>{
-     const {username, email, password } = req.body;
-    if(!username && !email){
-        return next(new AppError('Please provide either username or email for login',404))
+    console.log(req.body)
+     const { email, password } = req.body;
+    if( !email){
+        return next(new AppError('Please provide  email for login',404))
     }
     if(!password){
         return next(new AppError('you must have to provide password',404))
     }
-    const findby = {}
-    if(username) findby.username = username.toLowerCase();
-    if(email) findby.email = email.toLowerCase();
-    console.log(findby)
     const user = await prisma.user.findFirst({
         where:{
-            OR:[
-                {email:findby.email},
-                {username:findby.username}
-            ]
+            email:email.toLowerCase(),
         }
     })
     if(!user){
@@ -49,7 +43,7 @@ export const userLogin = asyncHandler(async(req, res, next)=>{
         success:true,
         message:"User logged in successfully",
         user:safedata,
-        accessToken:access
+        access,
     })
 })
 
@@ -104,7 +98,7 @@ export const userLogout = asyncHandler(async(req, res, next)=>{
 })
 
 export const checklogin = asyncHandler(async(req, res, next)=>{
-   const token = req.cookies.refresh;
+   const token = req.cookies?.refresh;
    if(!token){
     return next(new AppError('No Token found', 401))
    }
@@ -123,7 +117,7 @@ export const checklogin = asyncHandler(async(req, res, next)=>{
    res.status(200).json({
     success:true,
     message:'New Access Token generated',
-    accessToken:access,
+    access,
     user:safedata,
    })
 })
@@ -152,8 +146,24 @@ export const createNewAccessToken = asyncHandler(async(req, res, next)=>{
 
 export const googlecallback = asyncHandler(async(req, res,next)=>{
     const user = req.user;
+    console.log(user)
+    const access = accessToken(user);
     const refresh = refreshToken(user);
-    res.redirect(
+    await prisma.user.update({
+        where:{
+            email:user.email
+        },
+        data:{
+            refreshToken:refresh,
+        }
+    })
+    res.cookie('refresh',refresh,{
+        httpOnly:true,
+        sameSite:'none',
+        secure:true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+   res.redirect(
     `http://localhost:3000`
   )
 })

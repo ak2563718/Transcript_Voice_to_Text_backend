@@ -136,7 +136,8 @@ exports.Prisma.TextScalarFieldEnum = {
   id: 'id',
   text: 'text',
   audioUrl: 'audioUrl',
-  userId: 'userId'
+  userId: 'userId',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {

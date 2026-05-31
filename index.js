@@ -10,6 +10,8 @@ import { prisma } from "./src/db.js";
 import cloudinary from "./config/cloudinary.js";
 import { errorMiddleware } from './middleware/error.Middleware.js'
 import userRoutes from './routes/user.Routes.js'
+import textRoutes from './routes/text.route.js'
+import { decodeaccessToken } from "./utils/tokenCreation.js";
 
 const app = express();
 
@@ -23,7 +25,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use('/api',userRoutes)
-
+app.use('/api',textRoutes)
 const server = createServer(app);
 
 const io = new Server(server, {
@@ -34,6 +36,30 @@ const io = new Server(server, {
 });
 
 const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
+
+// ✅ Middleware runs BEFORE connection — this is already correct in Socket.IO
+io.use((socket, next) => {
+  try {
+    const token = socket.handshake.auth?.token;
+    console.log("token is comming",token)
+    if (!token) {
+      // No token — still allow connection as guest
+      socket.userId = null;
+      return next();
+    }
+    const decoded = decodeaccessToken(token);
+    if (!decoded?.id) {
+      socket.userId = null;
+      return next(); // or: return next(new Error("Invalid token"));
+    }
+    socket.userId = decoded.id;
+    return next();
+  } catch (err) {
+    console.error("Socket auth error:", err);
+    socket.userId = null;
+    return next(); // Allow guest on error, or pass err to reject
+  }
+});
 
 io.on("connection", async (socket) => {
   console.log(`User Connected: ${socket.id}`);
@@ -81,6 +107,7 @@ io.on("connection", async (socket) => {
       data:{
         text:finalTranscript,
         audioUrl:secure_url,
+        userId:socket.userId || null,
       }
     })
     fs.unlinkSync(filePath)

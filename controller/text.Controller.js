@@ -1,31 +1,64 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { Server } from "socket.io";
+import { AppError } from '../utils/AppError.js'
+import { prisma } from '../src/db.js'
 
-export const initializeSocket = (server) => {
 
-    const io = new Server(server, {
-        cors: {
-            origin: "*"
+export const getallTranscript = asyncHandler(async(req, res, next)=>{
+    const text = await prisma.text.findMany({
+        orderBy:{
+            createdAt:"desc"
         }
     });
-
-    io.on("connection", (socket) => {
-
-        console.log("User connected");
-
-        socket.on("audio-chunk", async (chunk) => {
-
-            console.log("Audio Chunk Received");
-
-            // transcription logic here
-
-            const transcript = "hello world";
-
-            socket.emit("transcript", transcript);
-        });
-
-        socket.on("disconnect", () => {
-            console.log("User disconnected");
-        });
+    if(!text){
+        return next(new AppError('No recording found',400))
+    }
+    res.status(200).json({
+        message:'found',
+        text,
     })
-}
+});
+
+
+export const singletranscript = asyncHandler(async(req, res, next)=>{
+    const id = req.params.id;
+    const text = await prisma.text.findUnique({
+        where:{
+            id
+        }
+    });
+    if(!text){
+        return next(new AppError('No text found',400))
+    }
+    res.status(200).json({
+        message:'found',
+        text,
+    })
+});
+
+
+export const deletetext = asyncHandler(async(req, res, next)=>{
+    const id = req.params.id;
+    const text = await prisma.text.delete({
+        where:{
+            id
+        }
+    });
+    if(!text){
+        return next(new AppError("No text found", 400))
+    }
+    res.json(200).json({
+        message:'Transcript Deleted successfully',
+        text
+    })
+})
+
+export const deleteMany = asyncHandler(async(req, res, next)=>{
+    const text = await prisma.text.deleteMany({})
+    if(!text){
+        return next(new AppError("Nothing to delete", 400))
+    }
+    res.status(200).json({
+        message:"Deleted successfully",
+        text
+    })
+})
